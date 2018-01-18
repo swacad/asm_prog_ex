@@ -15,8 +15,7 @@
 ;
 ; 3.    Read the program's code below, and try to understand what does it do. Try
 ;       to describe it as simply as you can.
-;       It negates then increments the input number twice which actually results in the same number
-
+;       
 ; 4.    Pick some random inputs and verify your predictions about what this
 ;       program does.
 ;
