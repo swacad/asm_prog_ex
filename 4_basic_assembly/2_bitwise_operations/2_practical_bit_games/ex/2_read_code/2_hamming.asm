@@ -41,12 +41,12 @@ start:
 
 add_bit:
     mov     esi,eax
-    and     esi,1
-    add     ebx,esi
-    ror     eax,1
-    loop    add_bit
+    and     esi, 1       ; leave low order bit in esi
+    add     ebx,esi     ; Increment ebx with esi (may be 0)
+    ror     eax, 1      ; rotate eax by 1 to right
+    loop    add_bit     ; loop back to add_bit (32 times)
 
-    mov     eax,ebx
+    mov     eax,ebx     ; Copy result of counting all 1 bits in eax to eax.
     call    print_eax
 
     ; Exit the process:
