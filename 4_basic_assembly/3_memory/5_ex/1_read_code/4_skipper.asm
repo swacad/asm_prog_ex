@@ -36,11 +36,11 @@ start:
 
 skip_data:
     
-    mov     ecx,my_data_end - my_data
-    mov     esi,my_data
+    mov     ecx,my_data_end - my_data   ; Should put 5 in ECX used for loop counter
+    mov     esi,my_data                 ; Move start of memory location for 5-byte sequence
 
 print_byte:
-    movzx   eax, byte [esi]
+    movzx   eax, byte [esi]             ; moves byte from memory location my_data to EAX
     call    print_eax
     inc     esi
     loop    print_byte

@@ -12,6 +12,11 @@
 ; 1.    Read the program's code below, and try to understand what does it do. 
 ;       Try to describe it as simply as you can. Add comments if needed.
 ;
+;   Declares label dword 11223344h
+;   increments the first byte, which is the low order byte (i.e. 0x44)
+;   prints x_num
+;   
+
 ; 2.    Explain the program's output.
 ;
 

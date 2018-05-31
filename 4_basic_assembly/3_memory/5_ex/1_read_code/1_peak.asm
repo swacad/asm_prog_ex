@@ -13,6 +13,7 @@
 ;       Try to describe it as simply as you can. Add comments if needed.
 ;
 ; 2.    Explain the program's output.
+;   prints the max of the array of dwords
 ;
 ; 3.    Note the trick which allows to find out the size of the array at
 ;       assembly time. Try to add the element 21h to the array, and make sure
@@ -33,7 +34,7 @@ section '.data' data readable writeable
     ; (See code below)
 
     ; Here we define some consecutive dwords:
-    my_nums   dd  1,6,3,2,11h,3,9,17h,5h,14h
+    my_nums   dd  1,6,3,2,11h,3,9,17h,5h,14h, 21h
     my_nums_end:
 
     ; In this manner we could add new numbers to the array, and our code will
@@ -63,9 +64,9 @@ check_num:
     ; Get dword number esi from my_nums:
     mov     eax,dword [edi + 4*esi]
     cmp     ecx,eax
-    jae     no_new_max
+    jae     no_new_max ; if current dword is in eax is not greater than stored max
     ; Set new maximum:
-    mov     ecx,eax
+    mov     ecx,eax     ; else store new max
 no_new_max:
     inc     esi
     cmp     esi,ebx
