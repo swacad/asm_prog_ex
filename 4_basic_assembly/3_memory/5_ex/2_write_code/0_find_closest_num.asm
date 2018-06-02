@@ -25,7 +25,7 @@ include 'win32a.inc'
 ; ===============================================
 section '.data' data readable writeable
     ; some initalized data.
-    nums  dd  23h,75h,111h,0abch,443h,1000h,5h,2213h,433a34h,99h
+    nums  dd  23h,75h,111h,0abch,443h,1000h,5h,2213h,433a34h,0deadbeafh
     input dd 0h
     nearest dd 0h
 

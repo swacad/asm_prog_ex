@@ -55,22 +55,22 @@ start:
     ; PNT structure:
     ; ------------------
     mov     eax,my_point
-    call    print_eax
+    call    print_eax       ; print memory address of my_point
 
     mov     eax,my_point.x
-    call    print_eax
+    call    print_eax       ; print my_point
 
     mov     eax,my_point.y
-    call    print_eax
+    call    print_eax       ; print my_point + 1
 
     mov     eax,sizeof.PNT
-    call    print_eax
+    call    print_eax       ; print 2
 
     mov     eax,PNT.x
-    call    print_eax
+    call    print_eax       ; print 0
 
     mov     eax,PNT.y
-    call    print_eax
+    call    print_eax       ; print 1
 
     ; Prove the following: my_point + PNT.y == my_point.y
 
@@ -80,16 +80,16 @@ start:
     ; --------------------
 
     mov     eax,sizeof.LINE
-    call    print_eax
+    call    print_eax       ; print 4
 
     mov     eax,my_line
-    call    print_eax
+    call    print_eax       ; print memory address of my_line
 
     mov     eax,my_line.p_end.x
-    call    print_eax
+    call    print_eax       ; print my_line + 2
 
     mov     eax,LINE.p_end.x
-    call    print_eax
+    call    print_eax       ; print 2
 
     ; Prove the following: my_line + LINE.p_end.x == my_line.p_end.x
 
@@ -100,13 +100,13 @@ start:
 
     ; Try to predict the following offsets:
     mov     eax, COLORED_LINE.cline
-    call    print_eax
+    call    print_eax       ; print 4
 
     mov     eax, COLORED_LINE.cline.p_end
-    call    print_eax
+    call    print_eax       ; print 6
 
     mov     eax, COLORED_LINE.cline.p_end.y
-    call    print_eax
+    call    print_eax       ; print 7
 
 
     ; Exit the process:

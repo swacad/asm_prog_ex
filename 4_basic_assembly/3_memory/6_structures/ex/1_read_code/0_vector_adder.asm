@@ -9,7 +9,7 @@
 ; 
 ; 0.    Assemble and run this program.
 ;
-; 1.    How many inputs does this program require? 
+; 1.    How many inputs does this program require? 4
 ;       Try to give the program some inputs, and check out the results. 
 ;
 ; 2.    Read the program's code below, and try to understand what does it do. 
@@ -17,6 +17,8 @@
 ;
 ; 3.    Explain: Why is the bss section being used in this program, and not the
 ;       data section?
+;       The bss section is used for declaring uninitialized areas of memory for use during run time.
+
 
 format PE console
 entry start

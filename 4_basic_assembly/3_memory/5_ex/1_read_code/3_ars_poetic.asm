@@ -11,6 +11,7 @@
 ;
 ; 1.    Read the program's code below, and try to understand what does it do. 
 ;       Try to describe it as simply as you can. Add comments if needed.
+;           Prints all byte content from memory location start to end_prog
 ;
 ; 2.    Explain the program's output.
 ;
@@ -30,10 +31,10 @@ include 'win32a.inc'
 section '.text' code readable executable
 
 start:
-
     mov     esi,start
+    
 print_byte:
-    movzx   eax, byte [esi]
+    movzx   eax, byte [esi]                 ; Move byte in address to EAX
     call    print_eax
     inc     esi
     cmp     esi,end_prog
