@@ -1,37 +1,28 @@
-; 0.  Area competition.
-
-    ; For every rectangle R which is parallel to the X and Y axes, we can
-    ; represent R using two points.
-
-    ; Example:
-  
-      ; A------------B
-      ; |     R      |
-      ; |            |
-      ; D------------C
-
-      ; We could represent the rectangle in the drawing using the points A(x,y)
-      ; and C(x,y) for example. Basically, we need 4 numbers to represent this
-      ; kind of rectangle: 2 coordinates for A, and 2 coordinates for C.
-
-      ; I remind you that the area of a rectangle is computed as the
-      ; multiplication of its height by its width.
-
-
-    ; Write a program that takes the coordinates of two rectangles (2 points or 4
-    ; dwords for each rectangle), and then finds out which rectangle has the
-    ; larger area.
-
-    ; The program then outputs 0 if the first rectangle had the largest area, or 1
-    ; if the second rectangle had the largest area. 
-
-    ; In addition, the program prints the area of the rectangle that won the area
-    ; competition.
+;2.  Lexicographic sort.
+;
+;    We define the lexicographic order as follows:
+;    For every two points (a,b), (c,d), we say that (a,b) < (c,d) if:
+;
+;    (a < c) or (a = c and b < d)
+;
+;    This order is similar to the one you use when you look up words in the
+;    dictionary. The first letter has bigger significance than the second one,
+;    and so on.
+;
+;    Examples:
+;
+;      (1,3) < (2,5)
+;      (3,7) < (3,9)
+;      (5,6) = (5,6)
+;
+;    Write a program that takes 6 points as input (Two coordinates for each
+;    point), and prints a sorted list of the points, with respect to the
+;    lexicographic order.
 
 format PE console
 entry start
 
-include 'win32a.inc' 
+include 'win32a.inc'
 
 ; Coordinate structure:
 struct COORD
@@ -41,88 +32,141 @@ ends
 
 ; ===============================================
 section '.bss' readable writable
+p1      COORD  ?
+p2      COORD  ?
+p3      COORD  ?
 
-    
-    
+s1      dd      ?
+s2      dd      ?
+s3      dd      ?
+
+
 ; ===============================================
 section '.text' code readable executable
 
 start:
+
+    ; Read p1:
+    call    read_hex
+    mov     byte [p1.x], al
+    call    read_hex
+    mov     byte [p1.y], al
+
+    ; read p2
+    call    read_hex
+    mov     byte [p2.x], al
+    call    read_hex
+    mov     byte [p2.y], al
+
+    ; read p3
+    call    read_hex
+    mov     byte [p3.x], al
+    call    read_hex
+    mov     byte [p3.y], al
+
+    ; initialize sort indices
+    mov [s1], p1
+    mov [s2], p2
+    mov [s3], p3
     
-    ; Read first rectangle:
-    call    read_hex    ; read r1.top_left.x
-    mov     byte [r1.top_left.x], al
-    call    read_hex    ; read r1.top_left.y
-    mov     byte [r1.top_left.y], al
-    call    read_hex    ; read r1.bottom_right.x
-    mov     byte [r1.bottom_right.x], al
-    call    read_hex    ; read r1.bottom_right.x
-    mov     byte [r1.bottom_right.y], al
-    
-    ; Read second rectangle:
-    call    read_hex    ; read r2.top_left.x
-    mov     byte [r2.top_left.x], al
-    call    read_hex    ; read r2.top_left.y
-    mov     byte [r2.top_left.y], al
-    call    read_hex    ; read r2.bottom_right.x
-    mov     byte [r2.bottom_right.x], al
-    call    read_hex    ; read r2.bottom_right.x
-    mov     byte [r2.bottom_right.y], al
-    
-    ; Compute r1 area
-    movzx eax, byte [r1.top_left.x]
-    mov ebx, eax
-    movzx eax, byte [r1.bottom_right.x]
-    sub eax, ebx    ; get rectangle width
-    mov edx, eax    ; store width in EDX
-    
-    movzx eax, byte [r1.bottom_right.y]
-    mov ebx, eax
-    movzx eax, byte [r1.top_left.y]
-    sub eax, ebx    ; get rectangle height
-    
-    imul edx        ; compute rectangle area
-    
-    mov ecx, eax    ; store r1 area in ECX
-    call print_eax  ; Area for r1
-    
-    ; Compute r2 area
-    movzx eax, byte [r2.top_left.x]
-    mov ebx, eax
-    movzx eax, byte [r2.bottom_right.x]
-    sub eax, ebx    ; get rectangle width
-    mov edx, eax    ; store width in EDX
-    
-    movzx eax, byte [r2.bottom_right.y]
-    mov ebx, eax
-    movzx eax, byte [r2.top_left.y]
-    sub eax, ebx    ; get rectangle height
-    
-    imul edx        ; compute rectangle area
-    call print_eax  ; Area for r2
-    
-    ; Compare r1 and r2 areas
-    cmp eax, ecx
-    jb r1_larger
-    
-r2_larger:
-    mov ecx, eax    ; store r2 area in ECX
-    mov eax, 1
+    ; prints
+    mov eax, p1
     call print_eax
-    mov eax, ecx
+    mov eax, p2
     call print_eax
+    mov eax, p3
+    call print_eax
+    call print_delimiter
+
+first_pass:     ; Compare p1 and p2
+    movzx eax, byte [p1.x]
+    cmp al, byte [p2.x]     ; compare p1.x to p2.x
+    jg p1_greater_p2
+    je first_pass_check_second
+    jmp second_pass
+
+first_pass_check_second:
+    movzx eax, byte [p1.y]
+    cmp al, byte [p2.y]     ; compare p1.y to p2.y
+    jg p1_greater_p2
+    jmp second_pass
+
+p1_greater_p2:
+    mov [s2], p1
+    mov [s1], p2
+    
+    mov eax, [s1]
+    call print_eax
+    mov eax, [s2]
+    call print_eax
+    mov eax, [s3]
+    call print_eax
+    call print_delimiter
+
+second_pass:    ; compare [s1] and p3
+    mov esi, [s1]
+    movzx eax, byte [esi]
+    cmp al, byte [p3.x]
+    jg s1_greater_p3    ; point in s1 is greater than p3
+    je second_pass_check_second
+    jmp third_pass
+    mov eax, 11h
+    call print_eax
+
+second_pass_check_second:
+    movzx eax, byte [esi + 1]
+    cmp al, byte [p3.y]
+    jg s1_greater_p3    
+    jmp third_pass
+    
+s1_greater_p3:
+    mov eax, 21h
+    call print_eax
+    mov eax, [s1]   ; Store previous lowest point in EAX
+    mov ebx, [s2]   ; store current middle point in EBX
+    
+    mov [s1], p3    ; store p3 in the first position as the lowest point
+    
+    mov [s2], eax
+    mov [s3], ebx
+    
+    mov eax, [s1]
+    call print_eax
+    mov eax, [s2]
+    call print_eax
+    mov eax, [s3]
+    call print_eax
+    call print_delimiter
+
+third_pass: ; compare p2 and p3
+    movzx eax, byte [p2.x]
+    cmp al, byte [p3.x]     ; compare p2.x to p3.x
+    jg p2_greater_p3
+    je third_pass_check_second
     jmp exit
 
-r1_larger:
-    mov eax, 0
+third_pass_check_second:
+    movzx eax, byte [p2.y]
+    cmp al, byte [p3.y]     ; compare p1.y to p2.y
+    jg p2_greater_p3
+    jmp exit
+
+p2_greater_p3:
+    mov [s3], p2
+    mov [s2], p3
+    
+    mov eax, [s1]
     call print_eax
-    mov eax, ecx
+    mov eax, [s2]
     call print_eax
+    mov eax, [s3]
+    call print_eax
+    call print_delimiter
 
 exit:
     ; Exit the program:
-	push	0
-	call	[ExitProcess]
+        push    0
+        call    [ExitProcess]
 
 
 include 'training.inc'
