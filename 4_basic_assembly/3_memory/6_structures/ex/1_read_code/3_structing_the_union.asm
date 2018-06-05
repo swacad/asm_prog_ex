@@ -32,8 +32,8 @@ struct  COOL
                 struct
                     union
                         struct
-                            x   dd  ?
-                            y   dd  ?
+                            x   dd  ?   ; 0
+                            y   dd  ?   ; 4
                         ends
                     ends
                 ends
@@ -51,8 +51,8 @@ struct  COOLER
                     union
                         struct
                             union
-                                x   dd  ?
-                                y   dd  ?
+                                x   dd  ?   ; 0
+                                y   dd  ?   ; 0
                             ends
                         ends
                     ends
@@ -68,19 +68,19 @@ section '.text' code readable executable
 start:
     ; Predict all the following printed values:
     mov     eax,COOL.x
-    call    print_eax
+    call    print_eax   ; 0
 
     mov     eax,COOL.y
-    call    print_eax
+    call    print_eax   ; 4
 
     ; Print a delimiter:
     call    print_delimiter
 
     mov     eax,COOLER.x
-    call    print_eax
+    call    print_eax   ; 0
 
     mov     eax,COOLER.y
-    call    print_eax
+    call    print_eax   ; 0
 
 
     ; Exit the process:

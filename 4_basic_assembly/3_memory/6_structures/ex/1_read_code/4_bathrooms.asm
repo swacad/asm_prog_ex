@@ -9,11 +9,14 @@
 ; 
 ; 0.    Assemble and run this program.
 ;
-; 1.    How many inputs does this program require? 
+; 1.    How many inputs does this program require?  2 
 ;       Try to give the program some inputs, and check out the results. 
 ;
 ; 2.    Read the program's code below, and try to understand what does it do. 
 ;       Try to describe it as simply as you can. Add comments if needed.
+;           Takes user x, y coordinates and finds the closest bathroom in the city then
+;           prints the sum of square differences and the x, y coordinates of the the 
+;           closest bathroom.
 ;
 ; 3.    Try to draw the city's map.
 ;
@@ -25,8 +28,8 @@ include 'win32a.inc'
 
 ; Coordinate structure:
 struct COORD
-    x   db  ?
-    y   db  ?
+    x   db  ?   ; 0
+    y   db  ?   ; 1
 ends
 
 ; Dimensions of the city:
@@ -63,9 +66,9 @@ section '.text' code readable executable
 start:
     
     ; Read current location from user:
-    call    read_hex
+    call    read_hex    ; read width
     mov     edx,eax
-    call    read_hex
+    call    read_hex    ; read height
 
     ; First make sure that the location is inside the city.
     ; If not, exit the program.
@@ -103,17 +106,17 @@ calc_one_dist:
     movzx   ebx,byte [esi + COORD.x]
     sub     eax,ebx
     imul    eax
-    add     edi,eax
+    add     edi,eax ; Sum squared difference for x
 
     ; (user_location.y - bathroom.y)^2
     movzx   eax,byte [user_location.y]
     movzx   ebx,byte [esi + COORD.y]
     sub     eax,ebx
     imul    eax
-    add     edi,eax
+    add     edi,eax ; Sum square difference for y 
 
     ; Now edi == distance(user_location,current_bathroom)^2
-    cmp     edi,dword [closest_bathroom_dist]
+    cmp     edi,dword [closest_bathroom_dist]   ; Compare to current maximum distance
     jge     not_closer
 
     ; Update the closest distance to be edi:
