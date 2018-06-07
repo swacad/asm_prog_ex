@@ -9,16 +9,17 @@
 ;
 ; 0.    Assemble and run this program.
 ;
-; 1.    How many inputs does this program require? 
+; 1.    How many inputs does this program require? 1
 ;       Try to give the program some inputs, and check out the results. 
 ;
-;       How does the output look like? What does it mean?
+;       How does the output look like? What does it mean? Looks random.
 ;
 ; 2.    Read the program's code below, and try to understand what does it do. 
 ;       Try to describe it as simply as you can. Add comments if needed.
 ;
 ; 3.    What is special about the data array world? Could you create a data
 ;       array with the same special property yourself?
+;           The array world seems to always loop 100 times regardless of input. 
 ;
 ; 4*.   Bonus: How many data arrays like world of a fixed length n exist?
 ;
@@ -30,6 +31,7 @@ include 'win32a.inc'
 
 ; ===============================================
 section '.data' data readable writeable
+    ; 11 * 23 + 3 = 256 bytes
     world   db      0x2e,0x99,0xba,0x21,0x4b,0x7d,0xf4,0x54,0xa1,0xb8,0x41
             db      0x12,0xf3,0x64,0xc7,0x4a,0x1b,0x9f,0x40,0x79,0xf5,0xa5
             db      0x58,0xa0,0xda,0x34,0xbe,0xdc,0xde,0x6e,0x70,0xec,0x24
@@ -68,14 +70,14 @@ start:
 
 next_location:
     call    print_eax
-    movzx   eax,byte [esi + eax]
-    inc     ecx
-    cmp     eax,edx
-    jnz     next_location
+    movzx   eax,byte [esi + eax]    ; Move the EAXth byte to EAX
+    inc     ecx                     ; increment loop counter
+    cmp     eax,edx                 ; Compare the value from location EAX to EDX
+    jnz     next_location           ; If the values don't match loop again
 
     call    print_delimiter
     ; print hop count:
-    mov     eax,ecx
+    mov     eax,ecx                 ; Print loop counter.
     call    print_eax
 
     ; Exit the process:

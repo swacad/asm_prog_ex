@@ -9,15 +9,16 @@
 ;
 ; 0.    Assemble and run this program.
 ;
-; 1.    How many inputs does this program require? 
+; 1.    How many inputs does this program require? 1
 ;       Try to give the program some inputs, and check out the results. 
 ;
 ; 2.    Read the program's code below, and try to understand what does it do. 
 ;       Try to describe it as simply as you can. Add comments if needed.
 ;
 ; 3.    Note the instruction: "add  dl,byte [esi + edi]". Is there a danger
-;       of wraparound in dl? Why?
-;
+;       of wraparound in dl? Why? 
+;           Yes. DL is 8 bits and can overflow the when adding two 8 bit 
+;           numbers that sum greater than 255.
 
 format PE console
 entry start
@@ -53,10 +54,11 @@ start:
     mov     esi,popcorn
 
 one_iter:
-    movzx   edi,al
-    add     dl,byte [esi + edi]
-    ror     eax,8
-    loop    one_iter
+    call print_eax
+    movzx   edi,al  ; Move low 8 bits from AL to EDI
+    add     dl,byte [esi + edi] ; Get the EDI byte from popcorn into DL
+    ror     eax,8   ; Rotate EAX right by 8 bits
+    loop    one_iter    ; Loop 4 times (ECX = 4)
 
     mov     eax,edx
     call    print_eax

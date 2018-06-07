@@ -22,18 +22,20 @@
 ; 1.    Try to give the program the input numbers: a,a. What is the result? Why?
 ;       Make a small modification in the source code below so that the input a,a
 ;       will return the correct result.
+;           Modify the size of WIDTH and HEIGHT
 ;
 ; 2.    Try to give the program an input of two very large numbers. Example:
 ;       10000,10000. What happens? Why?
-;
+;           Goes past the memory allocated for the program causing the program to
+;           crash.
 
 format PE console
 entry start
 
 include 'win32a.inc' 
 
-WIDTH = 10
-HEIGHT = 10
+WIDTH = 0fffh
+HEIGHT = 0fffh
 ; ===============================================
 section '.bss' readable writeable
     ; Declare the uninitialized table in memory:
@@ -58,11 +60,11 @@ next_column:
     add     esi,4
     inc     ebx
     cmp     ebx,WIDTH
-    jnz     next_column
+    jnz     next_column ; Loop until all columns completed in row
 
     inc     ecx
     cmp     ecx,HEIGHT
-    jnz     next_row
+    jnz     next_row    ; Loop until all rows completed
 
     ; We read coordinates inside the table as input,
     ; And then print back the contents of the relevant cell:
@@ -74,8 +76,8 @@ next_column:
     mov     ecx,eax
 
     mov     edi,WIDTH*4
-    mul     edi
-    lea     eax,[eax + ebx*4]
+    mul     edi ; Loads EAX with WIDTH*4 = 40
+    lea     eax,[eax + ebx*4]   ; EAX = 40 + EBX * 4
     mov     esi,mul_tbl
 
     mov     eax,dword [esi+eax]
