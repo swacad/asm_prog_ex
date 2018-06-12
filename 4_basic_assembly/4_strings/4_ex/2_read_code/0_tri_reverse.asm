@@ -45,14 +45,17 @@ start:
 
     ; Read size from user:
     call    read_hex
+    xor edx, edx
 
 draw_line:
-    mov     ecx,eax
+    inc edx
+    mov ecx, edx
+
 one_star:
     ; Print one star:
     mov     esi,star
     call    print_str
-    loop    one_star
+    loop one_star
     
     ; Print a new line:
     mov     esi,newline
