@@ -46,27 +46,29 @@ start:
     mov     esi,please_enter
     call    print_str
 
-    ; Read user's name:
+    ; Read user's name (location at EDI which is user_name):
     mov     ecx,MAX_NAME_LEN+1
     mov     edi,user_name
+    
+    ; Read string from console into EDI.ECX is size of buffer w/ null terminator
     call    read_line
 
     ; Now we build the greeting:
-    mov     edi,greeting
+    mov     edi,greeting    ; greeting is uninitialized
 
     ; Copy the hello part into the greeting:
-    mov     esi,hello
-hello_copy_byte:
-    lodsb
-    test    al,al
-    jz      copy_hello_done
-    stosb
-    jmp hello_copy_byte
+    mov     esi,hello   ; Use hello_copy_byte and copy_hello_done for flow control
+hello_copy_byte:    ; Copy one byte at a time from hello to greeting until null terminator
+    lodsb   ; AL <- [ESI], ESI += 1; ESI is 'Hello \0'
+    test    al,al   ; bitwise & of AL to check for null terminator
+    jz      copy_hello_done ; jump if null terminator found
+    stosb   ; [EDI] <- AL, EDI += 1; EDI is greeting memory buffer
+    jmp hello_copy_byte ; Repeat loop until null terminator found
 copy_hello_done:
 
     ; Copy the name part into the greeting:
     mov     esi,user_name
-name_copy_byte:
+name_copy_byte: ; Copy name one byte at a time until null terminator
     lodsb
     test    al,al
     jz      copy_name_done
@@ -76,7 +78,7 @@ copy_name_done:
 
     ; Copy the how are you part into the greeting:
     mov     esi,how_are
-hay_copy_byte:
+hay_copy_byte:  ; Copy ', how are you today?' one byte at a time until null terminator
     lodsb
     test    al,al
     jz      copy_hay_done
