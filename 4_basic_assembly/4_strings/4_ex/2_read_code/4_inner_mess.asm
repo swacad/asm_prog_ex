@@ -19,6 +19,8 @@
 ;
 ; 4.    What happens if we give the program an input of the form 
 ;       1234[5678, or 789324]12345 ?
+;       '1234[5678' prints '5678'
+;       '789324]12345' prints ''
 ;
 ;       Modify the program to handle those cases. Think about apropriate
 ;       messages that should be printed to the user.
@@ -37,6 +39,9 @@ section '.data' data readable writeable
 
     enter_text  db      'Please enter text:',13,10,0
     inside_br   db      'The following was found inside the brackets:',13,10,0
+    
+    no_closing_br_str db 'No closing bracket!',13,10,0
+    no_opening_br_str db 'No opening bracket!',13,10,0
 
 ; ===============================================
 section '.bss' readable writeable
@@ -61,18 +66,18 @@ start:
     mov     edi,user_text
     mov     ecx,MAX_USER_TEXT
     xor     al,al
-    repnz scasb
+    repnz scasb ; Repeat while not zero or ECX != 0; scan string; cmp al, [edi], edi += 1
 
     neg     ecx
     add     ecx,MAX_USER_TEXT
-    dec     ecx
+    dec     ecx ; Compute string length from user
 
-    mov     dword [slen],ecx
-    test    ecx,ecx
+    mov     dword [slen],ecx    ; Store length in slen
+    test    ecx,ecx ; Test for empty string with bitwise &
     jnz     string_not_empty
     ; Tell the user that the string is empty:
     mov     esi,string_emp
-    call    print_str
+    call    print_str   ; Print 'Sorry, you gave me an empty string...'
     ; Exit program:
 	push	0
 	call	[ExitProcess]
@@ -83,28 +88,40 @@ string_not_empty:
     mov     edi,user_text
     mov     ecx,dword [slen]
     mov     al,'['
-    repnz scasb
+    repnz scasb ; Scan until finding '[' or end of string
 
     dec     edi
-    mov     dword [first_b],edi
+    mov     dword [first_b],edi ; Store location of first bracket
+    
+    ; Handle no opening bracket
+    mov ebx, user_text
+    add ebx, dword [slen]
+    dec ebx
+    cmp ebx, edi
+    jbe no_opening_br
 
     ; Find the last bracket:
     mov     edi,user_text
     add     edi,dword [slen]
     dec     edi
-    std     ; Search backwards
+    std     ; Search backwards by setting direction flag
     mov     al,']'
     mov     ecx, dword [slen]
-    repnz   scasb
+    repnz   scasb   ; Scan backwards until beginning of string or finding ']'
     cld     ; Restore the direction forward.
     
     inc     edi
     mov     dword [last_b],edi
     
+    ; Handle no closing bracket
+    mov ebx, user_text
+    cmp ebx, edi
+    jae no_closing_br
+    
 
     ; Finally we print what's inside the brackets:
     mov     esi,inside_br
-    call    print_str
+    call    print_str   ; Print 'The following was found inside the brackets:'
 
     ; Store zero terminator instead of the last bracket:
     mov     edi, dword [last_b]
@@ -121,5 +138,17 @@ string_not_empty:
     ; Exit the process:
 	push	0
 	call	[ExitProcess]
+
+no_closing_br:
+    mov esi, no_closing_br_str
+    call print_str
+    push 0
+    call [ExitProcess]
+    
+no_opening_br:
+    mov esi, no_opening_br_str
+    call print_str
+    push 0
+    call [ExitProcess]
 
 include 'training.inc'
