@@ -15,7 +15,11 @@
 ;       Try to describe it as simply as you can. Add comments if needed.
 ;
 ; 3.    Explain the program's output.
-;
+;           Compares two strings and checks to see if one is greater than the other
+;           character by character based on the length of the first string.
+;           It will keep checking until null terminator found in first string
+;           or a situation where a character in the first string is not equal to
+;           to a character in the second string at the same position.
 
 format PE console
 entry start
@@ -67,15 +71,16 @@ start:
     ; Return the string to be printed at eax.
     mov     eax,strings_equal
 next_byte:
-    mov     dl,byte [esi]
-    cmpsb
+    mov     dl,byte [esi]   ; Use first string to check for null terminator
+    cmpsb   ; Compare byte at [esi] and [edi], esi, edi += 1
+    ; If null found, it will always be less than the other character unless two nulls
     jz      chars_equal
     ja      first_bigger
     jb      second_bigger
 
 chars_equal:
-    test    dl,dl
-    jnz     next_byte
+    test    dl,dl   ; check for null terminator
+    jnz     next_byte   ; if no null terminator move to next character
     jmp     finish_cmp
 
 first_bigger:
