@@ -13,12 +13,14 @@
 ;
 ; 2.    Read the program's code below, and try to understand what does it do. 
 ;       Try to describe it as simply as you can. Add comments if needed.
+;           Take user input and output a grade score
 ;
 ; 3.    Explain the program's output.
+;           Grade is computed by adding 1 for 'a' and 2 for 'A' to a running sum.
 ;
 ; 4.    What is the highest grade that could be obtained using this program?
 ;       Which input gives it?
-;
+;           Max grade is 0x40 * 2 given by 0x40 'A's
 
 format PE console
 entry start
@@ -45,7 +47,7 @@ section '.text' code readable executable
 
 start:
     mov     esi,enter_text
-    call    print_str
+    call    print_str   ; Print 'Welcome to the celebrations of the A-day!'
 
     mov     ecx,MAX_USER_TEXT
     mov     edi,user_text
@@ -54,19 +56,19 @@ start:
     mov     esi,user_text
 
 read_byte:
-    lodsb
+    lodsb   ; Load string (byte); al <- [esi], esi += 1
     cmp     al,'a'
     jnz     not_little_a
     ; We have an 'a':
-    inc     dword [grade]
+    inc     dword [grade]   ; Add 2 for lower case a
 not_little_a:
     cmp     al,'A'
     jnz     not_capital_a
     ; We have an 'A':
-    add     dword [grade],2
+    add     dword [grade],2 ; Add 2 for capital A
 not_capital_a:
-    test    al,al
-    jnz     read_byte
+    test    al,al   ; Check for null terminator
+    jnz     read_byte   ; If not null terminator jump back to read_byte
 
     mov     esi,your_grade
     call    print_str
