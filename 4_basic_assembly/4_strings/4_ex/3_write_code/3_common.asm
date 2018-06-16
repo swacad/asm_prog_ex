@@ -25,7 +25,9 @@ MAX_USER_TEXT = 40h
 section '.data' data readable writeable
     enter_text  db      'Please enter text:',13,10,0
     common_char db 'The character a is the most common character on the string.',13,10,0
-    occurrences db 'Amount of occurrences: ',13,10,0
+    ;          14th character ----^
+    occurrences db 'Amount of occurrences: 0',13,10,0
+    ;                   24th character ----^
     debug_text   db 'debug',13,10,0
     counts      db 128 dup (0)  ; Array to count characters. Increment by one with each match
 ; ===============================================
@@ -62,12 +64,9 @@ start:
     
 check_character:
     movzx eax, byte [esi]
-    call print_eax
     
     lea ebx, [edi + eax]  ; Load location to increment in counts array
     inc byte [ebx];
-    movzx eax, byte [ebx]
-    call print_eax
     
     ; Adjust indices in ESI
     inc esi
@@ -76,7 +75,9 @@ check_character:
 
 ; Get max value index from counts
     mov ecx, 128  ; counts array size
-    mov eax, 0
+    xor eax, eax  ; initialize EAX
+    mov esi, counts
+    mov byte [esi + 20h], 0 ; Remove spaces from being counted
 find_max_idx:
     dec ecx
     ;movzx eax, byte [edi]
@@ -89,13 +90,22 @@ find_max_idx:
     jmp exit
 
 more_common_found:
-    call print_str
-    mov al, byte [edi - 1]
-    call print_eax
+    mov al, byte [edi - 1]  ; Store new high count in AL
+    mov ebx, edi
+    sub ebx, esi
+    dec ebx  ; Store index of high count in EBX
     jmp find_max_idx
     
 exit:
-    call print_eax
+    mov esi, common_char
+    mov [esi + 14], bl  ; Change the 14th character to the correct most frequent char
+    call print_str  ; Print the adjusted most common character string
+    
+    mov esi, occurrences
+    add eax, 30h    ; Add 0x30 to align on ASCII table digits
+    mov [esi + 23], al  ; Change the 23rd character to be the count of the most frequent char
+    call print_str
+
     ; Exit the process:
 	push	0
 	call	[ExitProcess]
