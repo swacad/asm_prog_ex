@@ -1,6 +1,5 @@
 def diamond(n):
     num_lines = 2 * n + 1
-    print('total_stars = ' + str(num_lines))
 
     first_half = num_lines // 2 + 1
 
@@ -24,5 +23,24 @@ def diamond(n):
             star_str[j] = '*'
         print(''.join(star_str))
 
+def diamond2(n):
+    length = 2 * n + 1
+    first_half = length // 2 + 1
 
-diamond(8)
+    for i in range(first_half):
+        num_stars = 2 * i + 1
+        star_idx = length // 2 - i
+
+        for j in range(length):
+            if j < star_idx:
+                print('-', end='')
+            elif j >= star_idx:
+                if j < (star_idx + num_stars):
+                    print('*', end='')
+            else:
+                print('-', end='')
+
+        print('')
+
+
+diamond2(2)
