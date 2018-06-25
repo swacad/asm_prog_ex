@@ -38,8 +38,13 @@
 ;
 ; 2.    Read the program's code below, and try to understand what does it do. 
 ;       Try to describe it as simply as you can. Add comments if needed.
+;           Compares input to 3 and gives output of comparison.
+;           This program runs the same tests twice but with the same local labels
+;           which demonstrates that compiling this program doesn't fail with
+;           multiple local labels that are the same.
 ;
 ; 3.    Explain the program's output.
+;           Prints 'eax is 3 :)' or 'eax is not 3 :('
 ;
 ; 4.    Note that we have 2 local labels with the name .eax_is_3, and two local
 ;       labels with the name .end_test.
