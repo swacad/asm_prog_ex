@@ -38,8 +38,12 @@
 ;
 ;       Pay special attention to the strange use of the RET instruction.
 ;       Try to understand exactly what happens.
+;           The push of the .print_visible function onto the stack followed by a
+;           RET instruction always causes an immediate jump to .print_visible.
 ;
 ; 2.    Explain the program's output.
+;           Will always only print 'I can be seen!'. The code to print invisible
+;           is unreachable and hence will never execute.
 ;
 
 format PE console
@@ -60,12 +64,12 @@ section '.text' code readable executable
 start:
 
     mov     esi,welcome
-    call    print_str
+    call    print_str   ; print 'Welcome to the Catapult program.'
 
-    push    .print_visible
-    ret                         ; ?!
+    push    .print_visible  ; push .print_visible subroutine onto stack
+    ret ; return to location at top of stack, .print_visible. Similar to jmp .print_visible
 
-    mov     esi,invisible
+    mov     esi,invisible   ; Will never execute
     call    print_str
 
 .print_visible:
