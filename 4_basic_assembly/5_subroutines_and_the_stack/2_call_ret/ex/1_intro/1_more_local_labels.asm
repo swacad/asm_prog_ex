@@ -17,6 +17,9 @@
 ;
 ; 3.    Read the program's code below, and try to understand what does it do. 
 ;       Try to describe it as simply as you can. Add comments if needed.
+;           The program takes input n, and sums from 1 to n in function then prints
+;           the result to screen. The program also sums i^2 as i ranges from 1 to n^2
+;           then prints the result to screen.
 ;
 ; 4.    Explain the program's output.
 ;
@@ -46,15 +49,15 @@ section '.text' code readable executable
 
 start:
     mov     esi,enter_num
-    call    print_str
+    call    print_str ; print 'Enter n: '
 
     call    read_hex
-    mov     ecx,eax
+    mov     ecx,eax ; store n in ECX
 
     call    calc_sum
     ; Print: Total sum: ____
     mov     esi,sum_is
-    call    print_str
+    call    print_str   ; print 'Total sum: '
     call    print_eax
 
     call    calc_sum_squares
@@ -82,7 +85,7 @@ calc_sum:
     jecxz   .loop_done  ; Refers to calc_sum.loop_done.
     ; NOTE: .sum_loop is a local label.
     ; Its full name is calc_sum.sum_loop.
-.sum_loop:
+.sum_loop:  ; sum the total of decrementing ECX by 1
     add     eax,ecx
     loop    .sum_loop   ; Refers to calc_sum.sum_loop.
     ; note: .loop_done is a local label.
@@ -105,19 +108,19 @@ calc_sum_squares:
     push    edi
     push    edx
 
-    xor     edi,edi
+    xor     edi,edi ; Accumulator for summing squares
     jecxz   .loop_done  ; Refers to calc_sum_squares.loop_done.
     ; note: .sum_loop is a local label.
     ; its full name is calc_sum_squares.sum_loop
 .sum_loop:
     mov     eax,ecx
-    mul     ecx
-    add     edi,eax
+    mul     ecx ; Square ECX
+    add     edi,eax ; Sum the square to EDI
     loop    .sum_loop   ; Refers to calc_sum_squares.sum_loop
     ; note: .loop_done is a local label.
     ; its full name is 'calc_sum_squares.loop_done'.
 .loop_done:
-    mov     eax,edi
+    mov     eax,edi ; Store sum in EAX
 
     pop     edx         ; Restore registers from stack.
     pop     edi
