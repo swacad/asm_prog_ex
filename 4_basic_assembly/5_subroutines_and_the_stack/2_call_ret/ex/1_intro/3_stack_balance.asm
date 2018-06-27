@@ -31,9 +31,12 @@
 ;
 ; 1.    Read the program's code below, and try to understand what does it do. 
 ;       Try to describe it as simply as you can. Add comments if needed.
+;           Prints the value of the stack pointer (ESP) to screen before and after
+;           a function call to get_max
 ;
 ; 2.    Explain the program's output.
-;
+;           The output shows the stack remains balanced after a function call
+;           because the ESP values are the same before and after the call.
 
 format PE console
 entry start
@@ -43,7 +46,7 @@ include 'win32a.inc'
 ; ===============================================
 section '.data' data readable writeable
     my_arr          dd      5,8,143h,0,0fah,32h,45h,191h,14h,0,8h,13h,17h
-    MY_ARR_LEN = ($ - my_arr) / 4
+    MY_ARR_LEN = ($ - my_arr) / 4   ; Compute array length using $ as last memory location
 
     cur_esp         db      'Current ESP value: ',0
 
@@ -54,7 +57,7 @@ start:
 
     ; Print the value of esp:
     mov     esi,cur_esp
-    call    print_str
+    call    print_str   ; print 'Current ESP value: '
     mov     eax,esp
     call    print_eax
 
@@ -66,7 +69,7 @@ start:
 
     ; Print again the value of esp:
     mov     esi,cur_esp
-    call    print_str
+    call    print_str   ; print 'Current ESP value: '
     mov     eax,esp
     call    print_eax
 
@@ -88,14 +91,14 @@ get_max:
     push    edx         ; Keep edx to stack.
     xor     edx,edx     ; Iterator.
 .iter:
-    cmp     dword [esi + 4*edx],eax
+    cmp     dword [esi + 4*edx],eax     ; Compare current array value to EAX
     jbe     .skip_new_max
     ; We have a new maximum:
-    mov     eax,dword [esi + 4*edx]
+    mov     eax,dword [esi + 4*edx] ; If new max store in EAX
 .skip_new_max:
-    inc     edx
-    cmp     edx,ecx
-    jnz     .iter
+    inc     edx ; increment loop counter
+    cmp     edx,ecx ; Compare loop counter to max iterations
+    jnz     .iter   ; Iterate again if loop counter not equal to max iterations
     pop     edx         ; Restore edx from stack.
 .end_func:
     ret
