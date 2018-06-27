@@ -52,18 +52,28 @@ section '.data' data readable writeable
     star            db  '*',0
     newline         db  13,10,0
 
-    enter_wanted    db  'Enter wanted size of square: ',0
+    enter_wanted    db  'Enter wanted height then width of rectangle: ',0
 
 ; ===============================================
 section '.text' code readable executable
 
 start:
     mov     esi,enter_wanted
-    call    print_str   ; print 'Enter wanted size of square: '
+    call    print_str   ; print 'Enter wanted width then height of rectangle: '
 
     call    read_hex
     mov     ecx,eax ; store size in ECX
-    call    print_square
+    
+    call read_hex
+    mov eDx, eAx
+    
+    mov eAx, eSp
+    call print_eax
+    
+    call    print_rect
+    
+    mov eAx, eSp
+    call print_eax
 
     ; Exit the process:
 	push	0
@@ -72,14 +82,17 @@ start:
 
 ; ======================================================
 ; Input:
-;   ecx -- size of square. (ecx >= 2)
+;   ecx -- height. (ecx >= 2)
+;   eDx -- width
 ; Operation:
 ;   Prints a square made of stars of size ecx to the console.
 ;
-print_square:
+print_rect:
     push    edi         ; Keep edi.
     cmp     ecx,2
     jb      .end_func   ; End if ECX < 2
+    cmp eDx, 2
+    jb .end_func
 
     mov     edi,ecx     ; Save a copy of ecx.
 
@@ -111,10 +124,12 @@ print_square:
 ; 
 print_full_line:
     push    ecx     ; Keep registers.
+    push eDx
     push    esi
 
     ; Print a line of stars:
-.next_star: ; Loop to print line of stars where number of stars equals input size (ECX)
+    mov eCx, eDx
+.next_star: ; Loop to print line of stars where number of stars equals input size, EDX
     mov     esi,star
     call    print_str
     loop    .next_star
@@ -124,6 +139,7 @@ print_full_line:
     call    print_str
 
     pop     esi     ; Restore registers.
+    pop eDx
     pop     ecx
     ret
     
@@ -135,8 +151,11 @@ print_full_line:
 ; 
 print_hollow_line:  ; Can't get here unless ECX > 2
     push    ecx     ; Keep registers.
+    push eDx
     push    esi
 
+    mov eCx, eDx
+    
     cmp     ecx,2
     jb     .end_func
     ; If we are here, ecx >= 2:
@@ -163,6 +182,7 @@ print_hollow_line:  ; Can't get here unless ECX > 2
 
 .end_func:
     pop     esi     ; Restore registers.
+    pop eDx
     pop     ecx
     ret
 
