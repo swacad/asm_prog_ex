@@ -40,6 +40,8 @@
 ;
 ; 2.    Read the program's code below, and try to understand what does it do. 
 ;       Try to describe it as simply as you can. Add comments if needed.
+;           Sums i in range (1, n) and if the sum equals 0xA, print 
+;           'The sum is a!', else print 'The sum is not a...'
 ;
 ; 3.    Note the use of anonymous labels in the code.
 ;
@@ -63,14 +65,14 @@ section '.text' code readable executable
 start:
 
     mov     esi,enter_n
-    call    print_str
+    call    print_str   ; print 'Enter value for n: '
     call    read_hex
-    mov     ecx,eax
+    mov     ecx,eax ; store n in ECX
 
     xor     eax,eax
     jecxz   .after_loop ; We don't need to iterate if ecx == 0.
 @@:                     ; This is an anonymous label.
-    add     eax,ecx
+    add     eax,ecx ; sum i in range(1, n)
     loop    @b          ; @b refers to the first anonymous label backwards.
                         ; You may also use @r, which is the same as @b.
 .after_loop:
@@ -79,11 +81,11 @@ start:
     jnz     @f          ; @f refers to the first anonymous label forward.
     
     mov     esi,sum_is_a
-    call    print_str
+    call    print_str   ; print 'The sum is a!'
     jmp     .end_check
 @@:                     ; This is an anonymous label.
     mov     esi,sum_not_a
-    call    print_str
+    call    print_str   ; print 'The sum is not a...'
 .end_check:
     
 
