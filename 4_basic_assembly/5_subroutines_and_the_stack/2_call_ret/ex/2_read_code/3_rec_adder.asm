@@ -19,9 +19,14 @@
 ;       during this program.
 ;
 ; 3.    Explain the program's output.
+;           The program sums the two inputs and prints the result.
 ;
 ; 4.    Try to give the program large numbers as input. What happens? Why?
 ;       Evaluate the size of the stack using this experiment.
+;           The summing happens through recursion which increases the stack size
+;           as the size of the first input increases. Too large of a number causes
+;           the stack to grown past the allocated memory space and overflow causing
+;           a crash.
 ;
 ; NOTE: 
 ;       The technique employed in this code where a function calls itself is
@@ -47,18 +52,30 @@ section '.text' code readable executable
 
 start:
     mov     esi,enter_first
-    call    print_str
+    call    print_str   ; print 'Enter first number: '
     call    read_hex
-    mov     ecx,eax
+    mov     ecx,eax ; Store 1st number in ECX
 
     mov     esi,enter_second
-    call    print_str
+    call    print_str   ; 'Enter second number: '
     call    read_hex
-
+    
+    ; print stack pointer
+    mov ebx, eax
+    mov eax, esp
+    call print_eax
+    mov eax, ebx
+    
     call    adder
+    
+    ; print stack pointer
+    mov ebx, eax
+    mov eax, esp
+    call print_eax
+    mov eax, ebx
 
     mov     esi,result_is
-    call    print_str
+    call    print_str   ; print 'The result is: '
     call    print_eax
 
     ; Exit the process:
@@ -66,11 +83,17 @@ start:
 	call	[ExitProcess]
 
 ; =================================================
-; Input: ?
-; Output: ?
+; Input: ECX: 1st number, EAX: 2nd number
+; Output: Sum in EAX where EAX += ECX
 ;
 adder:
-    jecxz   .end_func
+    ; print stack pointer
+    mov ebx, eax
+    mov eax, esp
+    call print_eax
+    mov eax, ebx
+    
+    jecxz   .end_func   ; if ECX == 0: return
     dec     ecx
     inc     eax
     call    adder
