@@ -10,6 +10,7 @@
 ; 0.    Assemble and run this program.
 ;
 ; 1.    Try to give the program different inputs, and observe the output.
+;           The program does not take user inputs.
 ;
 ; 2.    Skim the code. Take a look at the functions and their descriptions.
 ;       Understand the dependencies between the functions (Which function calls
@@ -21,9 +22,11 @@
 ;       Fill in the descriptions for the functions in this code.
 ;
 ; 4.    Explain the program's output.
+;           Sums the list of VEC values (x, y) to sum_vec and prints the result.
 ;
 ; 5.    Question for thought: How can you check that this program works right,
 ;       without verifying the full calculation yourself?
+;           Use a geometric sum with an easily computable formula in vec_list.
 ;       
 ;       HINT: How could you acheive it by a small change to the program?
 ;
@@ -40,7 +43,7 @@ ends
 
 ; ===============================================
 section '.data' data readable writeable
-
+; List of VEC structs which are 2 dwords each.
 vec_list    VEC     58 , -125
             VEC     158 , -17
             VEC     17 , 22
@@ -91,12 +94,12 @@ start:
     mov     esi,vec_list
     xor     ecx,ecx
 
-.next_vec:
+.next_vec:  ; loop thru all VECs
     call    add_vecs
-    add     esi,sizeof.VEC
-    inc     ecx
+    add     esi,sizeof.VEC  ; mov ESI to point to next VEC
+    inc     ecx ; increment loop counter
     cmp     ecx,LIST_LEN
-    jnz     .next_vec
+    jnz     .next_vec   ; If not done looping through entire list, repeat
 
     mov     esi,sum_vec
     call    print_vec
@@ -106,25 +109,25 @@ start:
 	call	[ExitProcess]
 
 ; ===============================================
-; Input: ?
-; Operation: ?
-; Output: ?
+; Input: ESI: pointer to current VEC; EDI: pointer to sum_vec to accumulate sum
+; Operation: Add x and y from VEC to sum_vec
+; Output: EDI updated with adding current VEC
 ;
 add_vecs:
     push    eax ; Save eax to the stack.
 
-    mov     eax,dword [esi + VEC.x]
-    add     dword [edi + VEC.x],eax
+    mov     eax,dword [esi + VEC.x] ; Get current x value from list
+    add     dword [edi + VEC.x],eax ; Add to sum_vec.x
 
-    mov     eax,dword [esi + VEC.y]
-    add     dword [edi + VEC.y],eax
+    mov     eax,dword [esi + VEC.y] ; get current y value from list
+    add     dword [edi + VEC.y],eax ; Add to sum_vec.y
 
     pop     eax ; Restore eax from the stack.
     ret
 
 ; ===============================================
-; Input: ?
-; Operation: ?
+; Input: ESI: sum_vec
+; Operation: prints the sum in sum_vec.x and sum_vec.y
 ; Output: ?
 ;
 print_vec:
